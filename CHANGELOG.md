@@ -1,11 +1,24 @@
 # Yii Database Change Log
 
-## 2.0.1 under development
+## 2.0.2 under development
 
 - Chg #1142: Add `$constraintColumns` parameter to `upsert()`, `upsertReturning()`, and `upsertReturningPks()` methods
   to allow explicit specification of columns for the `ON CONFLICT` clause. When `null` (default), the primary key or
   the first matching unique constraint is used. This fixes invalid `ON CONFLICT` clause generation when a table has
   multiple separate unique constraints (@dadansatria)
+- Enh #1172: Refactor `Query::queryScalar()` to use a cloned `Query` object (@darkspock)
+- New #1178: Support `UnitEnum` enums as column values (@Tigrov)
+- Bug #1176: Index the result of `AbstractSchema::getSchemaMetadata()` by table name, so `getSchemaChecks()`,
+  `getSchemaDefaultValues()`, `getSchemaForeignKeys()`, `getSchemaIndexes()`, `getSchemaPrimaryKeys()`,
+  `getSchemaUniques()` and `getTableSchemas()` expose the table each item belongs to (@KalimeroMK)
+
+## 2.0.1 February 09, 2026
+
+- Enh #1145, #1148: Explicitly import classes, functions, and constants in "use" section (@mspirkov)
+- Enh #1148: Add `declare(strict_types=1)` to `Yiisoft\Db\Constant\ColumnInfoSource` (@mspirkov)
+- Enh #1156: Remove unnecessary files from Composer package (@mspirkov)
+- Enh #1158: Explicitly mark readonly properties (@vjik)
+- Enh #1159: Improve performance of `AbstractSqlParser` class methods (@Tigrov)
 - Bug #1127: Fix `AbstractSchema::hasTable()` and `AbstractSchema::hasView()` methods to support names quoted with curly
   brackets `{{%table}}` (@batyrmastyr)
 

@@ -16,6 +16,7 @@ use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Expression\ExpressionInterface;
 use Yiisoft\Db\Helper\DbArrayHelper;
 use Yiisoft\Db\QueryBuilder\QueryBuilderInterface;
+use Yiisoft\Db\QueryBuilder\AbstractQueryBuilder;
 
 use function array_column;
 use function array_combine;
@@ -42,6 +43,11 @@ use function strpos;
 use function strtoupper;
 use function substr;
 use function trim;
+
+use const PHP_INT_MAX;
+use const PREG_SPLIT_NO_EMPTY;
+use const SORT_ASC;
+use const SORT_DESC;
 
 /**
  * Represents a `SELECT` SQL statement in a way that's independent of DBMS.
@@ -71,7 +77,7 @@ use function trim;
  * $rows = $command->queryAll();
  * ```
  *
- * Query internally uses the {@see \Yiisoft\Db\QueryBuilder\AbstractQueryBuilder} class to generate the SQL statement.
+ * Query internally uses the {@see AbstractQueryBuilder} class to generate the SQL statement.
  *
  * @psalm-import-type SelectValue from QueryPartsInterface
  * @psalm-import-type IndexBy from QueryInterface
@@ -827,24 +833,13 @@ class Query implements QueryInterface
             && empty($this->having)
             && empty($this->union)
         ) {
-            $select = $this->select;
-            $order = $this->orderBy;
-            $limit = $this->limit;
-            $offset = $this->offset;
+            $query = clone $this;
+            $query->select = [$selectExpression];
+            $query->orderBy = [];
+            $query->limit = null;
+            $query->offset = null;
 
-            $this->select = [$selectExpression];
-            $this->orderBy = [];
-            $this->limit = null;
-            $this->offset = null;
-
-            $command = $this->createCommand();
-
-            $this->select = $select;
-            $this->orderBy = $order;
-            $this->limit = $limit;
-            $this->offset = $offset;
-
-            return $command->queryScalar();
+            return $query->createCommand()->queryScalar();
         }
 
         $query = (new self($this->db))->select($selectExpression)->from(['c' => $this]);

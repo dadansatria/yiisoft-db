@@ -1,17 +1,19 @@
+name: backwards compatibility
+
 on:
   pull_request:
-    paths:
+    paths: &paths
       - 'src/**'
+      - 'config/**'
       - '.github/workflows/bc.yml'
+      - '.roave-backward-compatibility-check.xml'
       - 'composer.json'
   push:
     branches: ['master']
-    paths:
-      - 'src/**'
-      - '.github/workflows/bc.yml'
-      - 'composer.json'
+    paths: *paths
 
-name: backwards compatibility
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,7 +23,5 @@ jobs:
   roave_bc_check:
     uses: yiisoft/actions/.github/workflows/bc.yml@master
     with:
-      os: >-
-        ['ubuntu-latest']
       php: >-
-        ['8.3']
+        ['8.5']
